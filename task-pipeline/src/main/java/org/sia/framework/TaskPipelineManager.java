@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  * @create: 2023-06-30
  */
 @Slf4j
-public class UserDefinedSerialTaskManager {
+public class TaskPipelineManager {
 
     static {
         TaskWatcher.scheduleWatch();
@@ -66,18 +66,18 @@ public class UserDefinedSerialTaskManager {
      * 场景3：整合场景1 & 场景2，则userDefinedId选择为partition + userId。</br>
      *
      * @param taskNamespace
-     * @param userDefinedId
+     * @param pipelineId
      * @param task
      * @param executorService
      * @param interruptedSubtask
      */
-    private static <V> void submit(String taskNamespace, String userDefinedId, FutureTask<V> task,
+    private static <V> void submit(String taskNamespace, String pipelineId, FutureTask<V> task,
                                    ExecutorService executorService, boolean interruptedSubtask) {
         if (StringUtils.isEmpty(taskNamespace)) {
             throw new InvalidParameterException("task namespace nonnull.");
         }
-        if (StringUtils.isEmpty(userDefinedId)) {
-            throw new InvalidParameterException("user-defined ID nonnull.");
+        if (StringUtils.isEmpty(pipelineId)) {
+            throw new InvalidParameterException("pipeline ID nonnull.");
         }
         if (Objects.isNull(task)) {
             throw new InvalidParameterException("task nonnull.");
@@ -85,7 +85,7 @@ public class UserDefinedSerialTaskManager {
         if (Objects.isNull(executorService)) {
             throw new InvalidParameterException("executor service nonnull.");
         }
-        String lockName = generateLockName(taskNamespace, userDefinedId);
+        String lockName = generateLockName(taskNamespace, pipelineId);
         createOrAppend(lockName, task, executorService, interruptedSubtask);
     }
 
@@ -108,7 +108,7 @@ public class UserDefinedSerialTaskManager {
                 }
             }
             if (shouldCreateLock) {
-                synchronized (UserDefinedSerialTaskManager.class) {
+                synchronized (TaskPipelineManager.class) {
                     if (LOCK_NAME_LOCK_PAIR.containsKey(lockName)) {
                         lock = LOCK_NAME_LOCK_PAIR.get(lockName);
                     } else {
@@ -123,9 +123,9 @@ public class UserDefinedSerialTaskManager {
                 TaskNodeContainer<FutureTask<?>> taskNodeContainer =
                         TaskNodeContainer.create(TaskNode.create(task, interruptedSubtask));
                 LOCK_TASK_PAIR.put(lock, taskNodeContainer);
-                UserDefinedSerialRunnable userDefinedSerialRunnable =
-                        UserDefinedSerialRunnable.create(lockName, lock, taskNodeContainer);
-                executorService.submit(userDefinedSerialRunnable);
+                TaskPipelineRunnable taskPipelineRunnable =
+                        TaskPipelineRunnable.create(lockName, lock, taskNodeContainer);
+                executorService.submit(taskPipelineRunnable);
             } else {
                 TaskNode<FutureTask<?>> current = LOCK_TASK_PAIR.get(lock).getHead();
                 while (Objects.nonNull(current.next())) {
@@ -144,7 +144,7 @@ public class UserDefinedSerialTaskManager {
      * @param lockName
      */
     protected static void resourceRecovery(String lockName) {
-        synchronized (UserDefinedSerialTaskManager.class) {
+        synchronized (TaskPipelineManager.class) {
             ReentrantLock lock = LOCK_NAME_LOCK_PAIR.get(lockName);
             try {
                 lock.lock();
@@ -196,8 +196,8 @@ public class UserDefinedSerialTaskManager {
         return Optional.of(tv);
     }
 
-    private static String generateLockName(String taskNamespace, String userDefinedId) {
-        return taskNamespace + ":" + userDefinedId;
+    private static String generateLockName(String taskNamespace, String pipelineId) {
+        return taskNamespace + ":" + pipelineId;
     }
 
     @Data
@@ -261,13 +261,13 @@ public class UserDefinedSerialTaskManager {
                             TaskView.getInstance().setTotal(total);
                             TaskView.getInstance().setTaskView(taskView);
                         }
-                        log.info("User defined serial task view : {}", TaskView.getInstance());
+                        log.info("task view : {}", TaskView.getInstance());
                     } catch (Throwable e) {
-                        log.error("User defined serial task view error", e);
+                        log.error("task view error", e);
                     }
                 }
             };
-            Timer timer = new Timer("UserDefinedSerialTaskView", true);
+            Timer timer = new Timer("TaskPipelineView", true);
             long period = 10_000L;
             timer.schedule(watchingTask, 0, period);
         }
