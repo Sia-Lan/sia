@@ -34,27 +34,27 @@ public class TaskPipelineManager {
      * 当任务节点出错时串行子任务不中断，继续执行。
      *
      * @param taskNamespace
-     * @param userDefinedId
+     * @param pipelineId
      * @param task
      * @param executorService
      * @param <V>
      */
-    public static <V> void submitUninterruptedPipelineTask(String taskNamespace, String userDefinedId,
+    public static <V> void submitUninterruptedPipelineTask(String taskNamespace, String pipelineId,
                                                            FutureTask<V> task, ExecutorService executorService) {
-        submit(taskNamespace, userDefinedId, task, executorService, false);
+        submit(taskNamespace, pipelineId, task, executorService, false);
     }
 
     /**
      * 当任务节点出错时串行子任务被中断。
      *
      * @param taskNamespace
-     * @param userDefinedId
+     * @param pipelineId
      * @param task
      * @param executorService
      */
-    public static <V> void submitInterruptedPipelineTask(String taskNamespace, String userDefinedId,
+    public static <V> void submitInterruptedPipelineTask(String taskNamespace, String pipelineId,
                                                          FutureTask<V> task, ExecutorService executorService) {
-        submit(taskNamespace, userDefinedId, task, executorService, true);
+        submit(taskNamespace, pipelineId, task, executorService, true);
     }
 
     /**
