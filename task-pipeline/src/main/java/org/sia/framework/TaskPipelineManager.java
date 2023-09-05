@@ -39,8 +39,8 @@ public class TaskPipelineManager {
      * @param executorService
      * @param <V>
      */
-    public static <V> void submitUninterruptedSerialTask(String taskNamespace, String userDefinedId,
-                                                         FutureTask<V> task, ExecutorService executorService) {
+    public static <V> void submitUninterruptedPipelineTask(String taskNamespace, String userDefinedId,
+                                                           FutureTask<V> task, ExecutorService executorService) {
         submit(taskNamespace, userDefinedId, task, executorService, false);
     }
 
@@ -52,8 +52,8 @@ public class TaskPipelineManager {
      * @param task
      * @param executorService
      */
-    public static <V> void submitInterruptedSerialTask(String taskNamespace, String userDefinedId,
-                                                       FutureTask<V> task, ExecutorService executorService) {
+    public static <V> void submitInterruptedPipelineTask(String taskNamespace, String userDefinedId,
+                                                         FutureTask<V> task, ExecutorService executorService) {
         submit(taskNamespace, userDefinedId, task, executorService, true);
     }
 
