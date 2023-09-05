@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
-public class UserDefinedSerialRunnable implements Runnable {
+public class TaskPipelineRunnable implements Runnable {
 
     private final String lockName;
 
@@ -27,17 +27,17 @@ public class UserDefinedSerialRunnable implements Runnable {
 
     private TaskNode<FutureTask<?>> previous = TaskNode.create(null, true);
 
-    private UserDefinedSerialRunnable(String lockName, ReentrantLock lock, TaskNodeContainer<FutureTask<?>> container) {
+    private TaskPipelineRunnable(String lockName, ReentrantLock lock, TaskNodeContainer<FutureTask<?>> container) {
         this.lockName = lockName;
         this.lock = lock;
-        this.current = container.getHead();
-        this.previous.append(current);
+        current = container.getHead();
+        previous.append(current);
         this.container = container;
     }
 
-    public static UserDefinedSerialRunnable create(String lockName, ReentrantLock lock,
-                                                   TaskNodeContainer<FutureTask<?>> container) {
-        return new UserDefinedSerialRunnable(lockName, lock, container);
+    public static TaskPipelineRunnable create(String lockName, ReentrantLock lock,
+                                              TaskNodeContainer<FutureTask<?>> container) {
+        return new TaskPipelineRunnable(lockName, lock, container);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class UserDefinedSerialRunnable implements Runnable {
                 current = previous.next();
                 run();
             } else {
-                UserDefinedSerialTaskManager.resourceRecovery(lockName);
+                TaskPipelineManager.resourceRecovery(lockName);
             }
         } finally {
             if (Objects.nonNull(lock)) {
