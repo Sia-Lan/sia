@@ -181,12 +181,12 @@ public class TaskPipelineManager {
         return Optional.of(tv);
     }
 
-    public static Optional<TaskView> getTaskView(String taskNamespace, String userDefinedId) {
+    public static Optional<TaskView> getTaskView(String taskNamespace, String pipelineId) {
         Map<String, Integer> taskView;
         synchronized (TaskView.class) {
             taskView = TaskView.getInstance().getTaskView();
         }
-        String lockName = generateLockName(taskNamespace, userDefinedId);
+        String lockName = generateLockName(taskNamespace, pipelineId);
         int count = taskView.getOrDefault(lockName, 0);
         Map<String, Integer> lockNameTaskView = new HashMap<>();
         lockNameTaskView.put(lockName, count);
