@@ -8,7 +8,7 @@ task pipeline 任务管道框架，允许用户自定义key，拥有相同的key
 TaskPipelineManager暴露了两个提交任务的方法，submitUninterruptedPipelineTask方法保证当任务管道中的任务节点出错时，管道不中断，继续执行。submitInterruptedPipelineTask方法保证当任务管道中的任务节点出错时，管道中断，终止执行。
 
 ## 任务视图
-任务视图是实时查看任务数量，评估任务压力的接口，可结合用户的限流策略进行使用。TaskPipelineManager暴露了三个查看任务视图的方法，TaskPipelineManager#getTaskView()是用来查看总任务情况，TaskPipelineManager#getTaskView(String taskNamespace)是用来查看taskNamespace的任务情况，TaskPipelineManager#getTaskView(String taskNamespace, String pipeline)是用来查看pipeline的任务情况.
+任务视图是实时查看任务数量，评估任务压力的接口，用户可根据任务情况调整任务提交速率或策略。TaskPipelineManager暴露了三个查看任务视图的方法，TaskPipelineManager#getTaskView()是用来查看总任务情况，TaskPipelineManager#getTaskView(String taskNamespace)是用来查看taskNamespace的任务情况，TaskPipelineManager#getTaskView(String taskNamespace, String pipeline)是用来查看pipeline的任务情况.
 
 ## 高性能
 和传统线程池提交任务的流程不同，具有相同taskNamespace下的相同pipelineId使用同一个线程进行执行，降低了线程创建，销毁，切换的开销。
