@@ -12,9 +12,9 @@ public class TaskPipelineManagerTest {
     public static void main(String[] args) {
         AtomicInteger i = new AtomicInteger(0);
         while(i.getAndIncrement() <=100) {
-            TaskPipelineManager.submitUninterruptedSerialTask("taskNamespace-A", "userId-J", new FutureTask<>(runnable("taskNamespace-A:userId-J" + i.get()), "over"), EXECUTOR);
-            TaskPipelineManager.submitUninterruptedSerialTask("taskNamespace-A", "userId-K", new FutureTask<>(runnable("taskNamespace-A:userId-K" + i.get()), "over"), EXECUTOR);
-            TaskPipelineManager.submitUninterruptedSerialTask("taskNamespace-A", "userId-L", new FutureTask<>(runnable("taskNamespace-A:userId-L" + i.get()), "over"), EXECUTOR);
+            TaskPipelineManager.submitUninterruptedPipelineTask("taskNamespace-A", "userId-J", new FutureTask<>(runnable("taskNamespace-A:userId-J" + i.get()), "over"), EXECUTOR);
+            TaskPipelineManager.submitUninterruptedPipelineTask("taskNamespace-A", "userId-K", new FutureTask<>(runnable("taskNamespace-A:userId-K" + i.get()), "over"), EXECUTOR);
+            TaskPipelineManager.submitUninterruptedPipelineTask("taskNamespace-A", "userId-L", new FutureTask<>(runnable("taskNamespace-A:userId-L" + i.get()), "over"), EXECUTOR);
         }
         EXECUTOR.shutdown();
     }
