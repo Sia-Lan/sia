@@ -58,12 +58,8 @@ public class TaskPipelineManager {
     }
 
     /**
-     * 这是一个以taskNamespace + userDefinedId为分组条件的高性能异步并行执行框架。</br>
-     * 把提交进来的任务，按照提交顺序，通过taskNamespace + userDefinedId进行分组，值相同的串行执行，值不同的并行执行。</br>
-     * 我们可以在如下场景中使用：</br>
-     * 场景1：用户维度串行执行，则userDefinedId选择为userId。</br>
-     * 场景2：框架层面缓解Kafka消息积压问题，以kafka consumer 分派的partition数量进行并发度调整，则userDefinedId选择为kafkaPartitionId</br>
-     * 场景3：整合场景1 & 场景2，则userDefinedId选择为partition + userId。</br>
+     * 这是一个以taskNamespace + pipelineId为分组条件的高性能异步并行执行框架。</br>
+     * 把提交进来的任务，按照提交顺序，通过taskNamespace + pipelineId进行分组，值相同的串行执行，值不同的并行执行。</br>
      *
      * @param taskNamespace
      * @param pipelineId
